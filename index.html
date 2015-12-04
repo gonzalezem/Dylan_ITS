@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Dylan PolyA - ITS</title>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+    <link type="text/css" rel="stylesheet" href="stylesheets/bootstrap.min.css"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="stylesheets/bootstrap-responsive.min.css" rel="stylesheet">
+    <link href='http://fonts.googleapis.com/css?family=Rosario:400,700' rel='stylesheet' type='text/css'>
+    <link type="text/css" rel="stylesheet" href="stylesheets/main.css"/> 
+    <style type="text/css">
+circle.node {
+  cursor: pointer;
+  stroke: #617682;
+  stroke-width: .5px;
+}
+
+circle.node.directory {
+  stroke: #9ecae1;
+  stroke-width: 1px;
+}
+
+circle.node.collapsed {
+  stroke: #617682;
+}
+
+.nodetext {
+  fill: #252929;
+  font-weight: bold;
+  text-shadow: 0 0 0.2em white;
+}
+
+line.link {
+  fill: none;
+  stroke: #9ecae1;
+  stroke-width: 1.5px;
+}
+
+
+
+.my-legend .legend-title {
+  text-bottom: left;
+  margin-top: 0px;
+  font-weight: bold;
+  font-size: 90%;
+  }
+.my-legend .legend-scale ul {
+  margin: 0;
+  padding: 0;
+  float: left;
+  list-style: none;
+  }
+.my-legend .legend-scale ul li {
+  display: block;
+  float: left;
+  width: 50px;
+  margin-bottom: 0px;
+  text-align: center;
+  font-size: 80%;
+  list-style: none;
+  }
+.my-legend ul.legend-labels li span {
+  display: block;
+  float: left;
+  height: 15px;
+  width: 50px;
+  }
+.my-legend .legend-source {
+  font-size: 70%;
+  color: #999;
+  clear: both;
+  }
+.my-legend a {
+  color: #777;
+  }
+
+
+
+    </style>
+  </head>
+
+  <body>
+    <div class="content">
+      <div class="container">
+        <h1>Taxonomy from soil sample (Terry Bell samples)</h1>
+        <form class="form-inline">
+          <fieldset>
+          <label>Genotype:</label>
+          <select id="project">
+            <option value="data/NC_Fish.json">Fish Creek soil (Contaminated)</option>
+            <option value="data/C_Fish.json">Fish Creek soil (Non-Contaminated)</option>
+          </select>
+          </fieldset>
+        </form>
+            </div>
+
+    <div class='my-legend'>
+    <div class='legend-title'>Transcript taxonomy</div>
+    <div class='legend-scale'>
+      <ul class='legend-labels'>
+        <li><span style='background:#CDC890;'></span>Bact.</li>
+        <li><span style='background:#7DADAD;'></span>Fung.</li>
+        <li><span style='background:#BB472E;'></span>Metaz.</li>
+        <li><span style='background:#519548;'></span>Plant.</li>
+        <li><span style='background:#000000;'></span>Others</li>
+      </ul>
+    </div>
+ 
+
+        <div id="visualization"></div>
+
+        <fieldset>
+          <div id="data/NC_Fish.json"></div>
+        </fieldset>
+
+    <div class='my-legend'>
+        <div class='legend-source'><br>Hover to see the number of unique transcripts for a given taxon. Click and drag to rearrange tree. Simply click to collapse/expand nodes.</div>
+    </div>
+
+
+
+    <script type="text/javascript" src="javascripts/d3/d3.js"></script>
+    <script type="text/javascript" src="javascripts/d3/d3.geom.js"></script>
+    <script type="text/javascript" src="javascripts/d3/d3.layout.js"></script>
+    <script type="text/javascript" src="javascripts/CodeFlower_withColors.js"></script>
+    <script type="text/javascript" src="javascripts/dataConverter.js"></script>
+    <script type="text/javascript">
+      var currentCodeFlower;
+      var createCodeFlower = function(json) {
+        // update the data/NC_Fish.json textarea
+        document.getElementById('data/NC_Fish.json').value = JSON.stringify(json);
+        // remove previous flower to save memory
+        if (currentCodeFlower) currentCodeFlower.cleanup();
+        // adapt layout size to the total number of elements
+        var total = countElements(json);
+        w = parseInt(Math.sqrt(total) * 40, 10);
+        h = parseInt(Math.sqrt(total) * 40, 10);
+        // create a new CodeFlower
+        currentCodeFlower = new CodeFlower("#visualization", w, h).update(json);
+      };
+
+      d3.json('data/NC_Fish.json', createCodeFlower);
+
+      document.getElementById('project').addEventListener('change', function() {
+        d3.json(this.value, createCodeFlower);
+      });
+      document.getElementById('jsonInput').addEventListener('submit', function(e) {
+        e.preventDefault();
+        document.getElementById('visualization').scrollIntoView();
+        var json = JSON.parse(document.getElementById('data/NC_Fish.json').value);
+        currentCodeFlower.update(json);
+      });
+      document.getElementById('jsonConverter').addEventListener('submit', function(e) {
+        e.preventDefault();
+        var origin = this.children[0].children[0].value;
+        var data = this.children[0].children[1].value;
+        var json = convertToJSON(data, origin);
+        document.getElementById('visualization').scrollIntoView();
+        createCodeFlower(json);
+      });
+    </script>
+  </body>
+</html>
