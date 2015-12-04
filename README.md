@@ -1,5 +1,4 @@
-# Dylan_ITS
-<h4>RNA-Seq reads diversity in contaminted soil</h4>
+<h4>RNA-Seq reads diversity from contaminated soil</h4>
 This interactive graphic vizualizes the organism diversity by annotation, as it can be found in the soil of Salix Fish Creek in hydrocarbons contaminated soil.
 
 Note: RNA-Seq reads were sequenced, prepared by Terry Bell
